@@ -1,0 +1,69 @@
+// User function Template for C++
+class Solution {
+public:
+    int r, c;
+    int row[4] = {1, -1, 0, 0};
+    int col[4] = {0, 0, 1, -1};
+
+    bool valid(int n, int m) {
+        return (n >= 0 && n < r && m >= 0 && m < c);
+    }
+
+    vector<vector<char>> fill(vector<vector<char>>& mat) {
+        r = mat.size();
+        c = mat[0].size();
+        queue<pair<int, int>> q;
+
+        // Check first and last rows
+        for (int j = 0; j < c; j++) {
+            if (mat[0][j] == 'O') {
+                q.push({0, j});
+                mat[0][j] = 'T';
+            }
+            if (mat[r - 1][j] == 'O') {
+                q.push({r - 1, j});
+                mat[r - 1][j] = 'T';
+            }
+        }
+
+        // Check first and last columns
+        for (int i = 0; i < r; i++) {
+            if (mat[i][0] == 'O') {
+                q.push({i, 0});
+                mat[i][0] = 'T';
+            }
+            if (mat[i][c - 1] == 'O') {
+                q.push({i, c - 1});
+                mat[i][c - 1] = 'T';
+            }
+        }
+
+        // BFS to mark all 'O's connected to borders
+        while (!q.empty()) {
+            int i = q.front().first;
+            int j = q.front().second;
+            q.pop();
+
+            for (int k = 0; k < 4; k++) {
+                int ni = i + row[k];
+                int nj = j + col[k];
+                if (valid(ni, nj) && mat[ni][nj] == 'O') {
+                    mat[ni][nj] = 'T';
+                    q.push({ni, nj});
+                }
+            }
+        }
+
+        // Replace all 'O' with 'X', and 'T' back to 'O'
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (mat[i][j] == 'O')
+                    mat[i][j] = 'X';
+                else if (mat[i][j] == 'T')
+                    mat[i][j] = 'O';
+            }
+        }
+
+        return mat;
+    }
+};
