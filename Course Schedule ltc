@@ -1,0 +1,48 @@
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        // Code here
+        //n=no. of tasks
+        //p=list of prerequisite pairs
+        
+  //create adjacency list 
+ vector<vector<int>> adj(numCourses);
+vector<int>indeg(numCourses,0);
+
+for(int i=0;i<prerequisites.size();i++){
+adj[prerequisites[i][1]].push_back(prerequisites[i][0]);
+indeg[prerequisites[i][0]]++;
+
+}
+
+queue<int>q;
+
+for(int j=0;j<numCourses;j++){
+    if (!indeg[j]){
+        q.push(j);
+    }
+}
+
+int count=0;
+ 
+ while(!q.empty()){
+     int node=q.front();
+     q.pop();
+   count++;
+ //now looking for the neighboring nodes
+ for (int i=0;i<adj[node].size();i++){
+   indeg[adj[node][i]]--;
+ 
+   if(!indeg[adj[node][i]]){
+       q.push(adj[node][i]);
+   }
+    
+ }
+}
+  return count == numCourses;
+
+//if node == size then cycle not present and we can solve
+//if size < node then we cant 
+  
+    }
+};
