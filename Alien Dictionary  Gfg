@@ -1,0 +1,57 @@
+class Solution {
+  public:
+    string findOrder(vector<string> &words) {
+        vector<vector<int>> adj(26);
+        vector<int> indeg(26, 0);
+        vector<bool> present(26, false);
+        int N = words.size();
+
+        for (auto &word : words)
+            for (char c : word)
+                present[c - 'a'] = true;
+
+        for (int i = 0; i < N - 1; i++) {
+            string W1 = words[i];
+            string W2 = words[i + 1];
+
+            int j = 0;
+            while (j < W1.size() && j < W2.size() && W1[j] == W2[j])
+                j++;
+
+            if (j == W2.size() && j < W1.size())
+                return ""; // invalid
+
+            if (j < W1.size() && j < W2.size()) {
+                adj[W1[j] - 'a'].push_back(W2[j] - 'a');
+                indeg[W2[j] - 'a']++;
+            }
+        }
+
+        queue<int> q;
+        string ans = "";
+
+        for (int i = 0; i < 26; i++) {
+            if (present[i] && indeg[i] == 0)
+                q.push(i);
+        }
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            ans += (char)(node + 'a');
+
+            for (int neighbor : adj[node]) {
+                indeg[neighbor]--;
+                if (indeg[neighbor] == 0)
+                    q.push(neighbor);
+            }
+        }
+
+        // check for cycle
+        int count_present = count(present.begin(), present.end(), true);
+        if (ans.size() != count_present)
+            return "";
+
+        return ans;
+    }
+};
